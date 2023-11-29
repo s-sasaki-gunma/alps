@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Program Editor | ALPS</title>
+	<link rel="icon" href="../icon.ico">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/common.css">
+</head>
+<body>
+	<div class="header">
+		<div class="btn-group">
+			<button class="btn btn-default"><a href="../" class="glyphicon glyphicon-home">　HOME</a></button>
+			<button id="share" class="btn btn-default"><i class="glyphicon glyphicon-share"></i>　共有</button>
+			<button id="puzzle" class="btn btn-default"><i class="glyphicon glyphicon-share"></i>　パズル</button>
+			<div class="btn-group">
+				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<i class="glyphicon glyphicon-font"></i>　フォント
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" id="font-size">
+					<li><a href="#" data-size="1.0em">極小</a></li>
+					<li><a href="#" data-size="1.5em">小さい</a></li>
+					<li><a href="#" data-size="2.0em">普通</a></li>
+					<li><a href="#" data-size="2.5em">大きい</a></li>
+					<li><a href="#" data-size="3.0em">極大</a></li>
+				</ul>
+			</div>
+			<button id="save" class="btn btn-default"><i class="glyphicon glyphicon-save"></i>　書き出し</button>
+			<button id="open" class="btn btn-default"><i class="glyphicon glyphicon-folder-open">　読み込み</i></button>
+			<div class="btn-group">
+				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<i class="glyphicon glyphicon-pencil"></i>　言語
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" id="lang">
+					<li><a href="#" data-ext="c" data-mode="ace/mode/c_cpp">C/C++</a></li>
+					<li><a href="#" data-ext="cs" data-mode="ace/mode/csharp">C#</a></li>
+					<li><a href="#" data-ext="css" data-mode="ace/mode/css">CSS</a></li>
+					<li><a href="#" data-ext="f" data-mode="ace/mode/fortran">Fortran</a></li>
+					<li><a href="#" data-ext="html" data-mode="ace/mode/html">HTML</a></li>
+					<li><a href="#" data-ext="java" data-mode="ace/mode/java">Java</a></li>
+					<li><a href="#" data-ext="js" data-mode="ace/mode/javascript">JavaScript</a></li>
+					<li><a href="#" data-ext="json" data-mode="ace/mode/json">json</a></li>
+					<li><a href="#" data-ext="py" data-mode="ace/mode/python">Python</a></li>
+					<li><a href="#" data-ext="r" data-mode="ace/mode/r">R</a></li>
+					<li><a href="#" data-ext="rb" data-mode="ace/mode/ruby">Ruby</a></li>
+					<li><a href="#" data-ext="sql" data-mode="ace/mode/sql">SQL</a></li>
+					<li><a href="#" data-ext="vbs" data-mode="ace/mode/vbscript">VBScript</a></li>
+					<li><a href="#" data-ext="txt" data-mode="">(色なし)</a></li>
+				</ul>
+			</div>
+			<button id="delete" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i>　削除</button>
+		</div>
+	</div>
+	<div class="container">
+		<div class="content"><div id="editor" style="height:100%"></div></div>
+	</div>
+	<div class="sharedLink" id="generatorLink"></div>
+	<div class="sharedLink" id="puzzleLink"></div>
+
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js"></script>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.22.0/full/pyodide.js"></script>
+	<script src="https://s-sasaki-gunma.github.io/pyErrorJP/pyErrorJP.js"></script>
+	<script src="../js/js-deflate/rawdeflate.js"></script>
+	<script src="../js/js-deflate/rawinflate.js"></script>
+	<script src="../js/common.js"></script>
+	<script>
+		"use strict";
+		let ext = "txt"
+		let editor = ace.edit("editor");
+		editor.$blockScrolling = Infinity;
+		editor.setFontSize('2.0em');
+		editor.setTheme("ace/theme/monokai");
+		editor.setOptions({fontFamily: "HackGen"});
+
+		$('#share').click(function(e) {
+			//テキストエリアのコードをクエリパラメタへ変換してURLを生成
+			let myCode = editor.getValue();
+			let baseURL = location.origin + location.pathname;
+			let query = code2query(baseURL,myCode);
+			createLink(query, "generatorLink", "共有リンク　　");
+		});
+		$('#puzzle').click(function(e) {
+			let myCode = editor.getValue();
+			let baseURL = "./puzzle.html";
+			let query = code2query(baseURL,myCode);
+			createLink(query, "puzzleLink", "パズルリンク　");
+		});
+		$('#font-size').click(function(e) {
+			editor.setFontSize($(e.target).data('size'));
+			output.style.fontSize = $(e.target).data('size');
+		});
+		$('#save').click(function(e) {
+			(async ()=>{
+				let fh = await window.showSaveFilePicker({ suggestedName: 'untitle.' + ext });
+				let stream = await fh.createWritable();
+				let myCode = await editor.getValue();
+				let blob = await new Blob([ myCode ], { "type" : "text/plain" });
+				await stream.write(blob);
+				await stream.close();
+			})()
+		});
+		$('#open').click(function(e) {
+			if ( !confirm("現在表示中のコードが削除されます。\nファイルを読み込みますか？") ) return;
+			$('<input type="file" accept=".'+ ext +', text/plain">').on('change', function(event) {
+				var reader = new FileReader();
+				reader.onload = function(event) {
+					let myCode = event.target.result;
+					editor.setValue(myCode, -1);
+				};
+				reader.readAsText(event.target.files[0]);
+			})[0].click();
+		});
+		$('#lang').click(function(e) {
+			editor.getSession().setMode( $(e.target).data('mode') );
+			ext = $(e.target).data('ext');
+		});
+		$('#delete').click(function(e) {
+			if ( !confirm("削除しますか？") ) return;
+			editor.setValue("", -1);
+		});
+
+		//クエリパラメタからテキストエリアへコードの読込
+		editor.setValue(query2code(), -1);
+	</script>
+</body>
+</html>

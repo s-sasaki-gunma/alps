@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Python Editor | ALPS</title>
+	<link rel="icon" href="../icon.ico">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/common.css">
+</head>
+<body>
+	<div class="header">
+		<div class="btn-group">
+			<button class="btn btn-default"><a href="../" class="glyphicon glyphicon-home">　HOME</a></button>
+			<button id="exec" class="btn btn-default"><i class="glyphicon glyphicon-play"></i>　実行</button>
+			<button id="share" class="btn btn-default"><i class="glyphicon glyphicon-share"></i>　共有</button>
+			<button id="puzzle" class="btn btn-default"><i class="glyphicon glyphicon-share"></i>　パズル</button>
+<!--
+			<button id="birdseye" class="btn btn-default">コード解析<i class="glyphicon glyphicon-eye-open"></i></button>
+-->
+			<div class="btn-group">
+				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<i class="glyphicon glyphicon-font"></i>　フォント
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" id="font-size">
+					<li><a href="#" data-size="1.0em">極小</a></li>
+					<li><a href="#" data-size="1.5em">小さい</a></li>
+					<li><a href="#" data-size="2.0em">普通</a></li>
+					<li><a href="#" data-size="2.5em">大きい</a></li>
+					<li><a href="#" data-size="3.0em">極大</a></li>
+				</ul>
+			</div>
+			<button id="save" class="btn btn-default"><i class="glyphicon glyphicon-save"></i>　書き出し</button>
+			<button id="open" class="btn btn-default"><i class="glyphicon glyphicon-folder-open">　読み込み</i></button>
+			<div class="btn-group">
+				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<i class="glyphicon glyphicon-list-alt"></i>　サンプル
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" id="load">
+					<li><a href="#" data-src="./sample/hello.py">Hello World</a></li>
+					<li><a href="#" data-src="./sample/std-out.py">標準文字出力</a></li>
+					<li><a href="#" data-src="./sample/calc.py">算術演算</a></li>
+					<li><a href="#" data-src="./sample/std-in.py">標準文字入力</a></li>
+					<li><a href="#" data-src="./sample/state-if.py">条件分岐</a></li>
+					<li><a href="#" data-src="./sample/loop-for.py">順次繰り返し</a></li>
+					<li><a href="#" data-src="./sample/loop-while.py">条件繰り返し</a></li>
+					<li><a href="#" data-src="./sample/struct-list.py">リスト構造</a></li>
+					<li><a href="#" data-src="./sample/struct-dict.py">辞書構造</a></li>
+					<li><a href="#" data-src="./sample/struct-tuple.py">タプル構造</a></li>
+					<li><a href="#" data-src="./sample/module-random.py">乱数</a></li>
+				</ul>
+			</div>
+			<button id="delete" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i>　削除</button>
+		</div>
+	</div>
+	<div class="container">
+		<div class="content"><div id="editor" style="height:100%"></div></div>
+		<div class="content"><div id="output" style="height:100%">準備中（「実行▶」はまだ押さないでください）</div></div>
+	</div>
+	<div class="sharedLink" id="generatorLink"></div>
+	<div class="sharedLink" id="puzzleLink"></div>
+
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js"></script>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.22.0/full/pyodide.js"></script>
+    <script src="https://s-sasaki-gunma.github.io/pyErrorJP/pyErrorJP.js"></script>
+	<script src="../js/js-deflate/rawdeflate.js"></script>
+	<script src="../js/js-deflate/rawinflate.js"></script>
+	<script src="../js/common.js"></script>
+	<script>
+		"use strict";
+		let editor = ace.edit("editor");
+		let output = $('#output')[0];
+		editor.$blockScrolling = Infinity;
+		editor.setFontSize('2.0em');
+		editor.setTheme("ace/theme/monokai");
+		editor.getSession().setMode("ace/mode/python");
+		editor.setOptions({fontFamily: "HackGen"});
+
+		$('#exec').click(function(e) {
+			exec();
+		});
+		$('#share').click(function(e) {
+			//テキストエリアのコードをクエリパラメタへ変換してURLを生成
+			let myCode = editor.getValue();
+			let baseURL = location.origin + location.pathname;
+			let query = code2query(baseURL,myCode);
+			createLink(query, "generatorLink", "共有リンク　　");
+		});
+		$('#puzzle').click(function(e) {
+			let myCode = editor.getValue();
+			let baseURL = "./puzzle.html";
+			let query = code2query(baseURL,myCode);
+			createLink(query, "puzzleLink", "パズルリンク　");
+		});
+		$('#font-size').click(function(e) {
+			editor.setFontSize($(e.target).data('size'));
+			output.style.fontSize = $(e.target).data('size');
+		});
+		$('#save').click(function(e) {
+			(async ()=>{
+				let fh = await window.showSaveFilePicker({ suggestedName: 'untitle.py' });
+				let stream = await fh.createWritable();
+				let myCode = await editor.getValue();
+				let blob = await new Blob([ myCode ], { "type" : "text/plain" });
+				await stream.write(blob);
+				await stream.close();
+			})()
+		});
+		$('#open').click(function(e) {
+			if ( !confirm("現在表示中のコードが削除されます。\nファイルを読み込みますか？") ) return;
+			$('<input type="file" accept=".py, text/plain">').on('change', function(event) {
+				var reader = new FileReader();
+				reader.onload = function(event) {
+					let myCode = event.target.result;
+					editor.setValue(myCode, -1);
+				};
+				reader.readAsText(event.target.files[0]);
+			})[0].click();
+		});
+		$('#load').click(function(e) {
+			if ( !confirm("現在表示中のコードが削除されます。\n「"+ $(e.target).context.outerText +"」を開きますか？") ) return;
+			(async ()=>{
+				let source = await $(e.target).data('src');
+				let sourceCode = await fetch(source).then((res)=>{ return res.text() }).catch((res)=>{ return ""});
+				await editor.setValue( sourceCode, -1); 
+			})()
+		});
+		$('#delete').click(function(e) {
+			if ( !confirm("削除しますか？") ) return;
+			editor.setValue("", -1);
+		});
+
+		function writeStdout(output) {
+			window.postMessage({ output })
+			return output.length
+		}
+
+		function writeStderr(errmsg) {
+			window.postMessage({ errmsg })
+			return errmsg.length
+		}
+
+		function show(type, url, attrs) {
+			window.postMessage({ type, url, attrs: attrs?.toJs() })
+		}
+
+		async function init() {
+			window.onmessage = (e) => {
+			    if (e.data.output) {
+			        const pre = document.createElement("pre");
+			        pre.textContent = e.data.output;
+			        output.appendChild(pre);
+			    } else if (e.data.errmsg) {
+			        const pre = document.createElement("pre");
+			        pre.style.color = "#FF0000";
+			        pre.textContent = e.data.errmsg;
+			        pre.textContent += generateMsgJP(pre.textContent);
+			        output.appendChild(pre)
+			    } else if (e.data.url) {
+			        const el = document.createElement(e.data.type)
+			        el.src = e.data.url
+			        if (e.data.type === "audio") {
+			            el.controls = true
+			        }
+			        for (const [attr, value] of e.data.attrs ?? []) {
+			            el[attr] = value
+			        }
+			        output.appendChild(el)
+			    } else {
+			        console.log(e.data);
+			    }
+			}
+			try {
+				if (!loadPyodide.inProgress) {
+			        self.pyodide = await loadPyodide({
+						stdin  : () => {
+			    		    return prompt();
+			    		},
+					});
+				}
+				const setupCode = await fetch("./setupCode.py").then((res)=>{ return res.text() });
+				await self.pyodide.runPythonAsync(setupCode);
+			    output.innerText = "準備完了（「実行▶」できます）\n";
+			} catch (err) {
+			    console.error(err.message);
+			}
+		}
+
+		async function exec() {
+			output.innerText = "";
+			let python_code = editor.getValue();
+			try {
+				self.pyodide.globals.set("source", python_code);
+				await self.pyodide.runPythonAsync("await run(source)");
+			} catch(err) {
+				console.error(err.message);
+			}
+		}
+
+		init();
+		//クエリパラメタからテキストエリアへコードの読込
+		editor.setValue(query2code(), -1);
+
+	</script>
+</body>
+</html>

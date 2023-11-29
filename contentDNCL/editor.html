@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>PyPEN</title>
+	<link rel="icon" href="../icon.ico">
+	<link href="../js/js-pypen/js/jquery.contextMenu.min.css" type="text/css" rel="stylesheet"/>
+	<link href="../js/js-pypen/js/codemirror.css" type="text/css" rel="stylesheet"/>
+	<link href="../js/js-pypen/dncl.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+	<div>
+		<div id="Button_area">
+		<button   id="newButton" type="button">新規</button>
+		<button   id="runButton" type="button">実行</button>
+		<button   id="stepButton" type="button">ステップ実行</button>
+		<button   id="resetButton" type="button">リセット</button>
+		<button   id="dumpButton" type="button">変数確認</button>
+		<span     id="dirty">*</span>  <br>
+		<input    id="flowchartButton" type="checkbox">フローチャート
+		<button   id="drawButton" type="button" onclick="codeChange();">コード→フローチャート</button>
+		<button   id="pythonButton" type="button" onclick="makePython();">コード→Python</button>
+		<button   id="urlButton" type="button">URL生成</button><br>
+		<button   id="loadButton1" type="button">Load</button>
+		<input    id="loadButton" type="file" accept=".PyPEN"/>
+		<a href="#" id="downloadLink"><button>Save</button></a>
+		ファイル名：<input id="file_prefix" type="text"/><br>
+		</div>
+		<div id="Quiz_area">
+			<select id="quiz_select"></select>
+			<button id="quiz_marking">採点</button>
+			<p id="quiz_question"></p>
+		</div>
+		<table>
+			<tr><td>
+				<button type="button" id="font_up"   onclick='font_size(1);' style="width:2em;height:2em;">＋</button>
+				<button type="button" id="font_zero" onclick='font_size(0);' style="width:2em;height:2em;">0</button>
+				<button type="button" id="font_down" onclick='font_size(-1);' style="width:2em;height:2em;">−</button>
+			</td><td>
+				<div id="Input_area">
+					<input id="input_area" type="text" size="20" onkeydown="keydownInput(event);">
+					<span id="input_status">Now Loading...</span><br>
+				</div>
+			</td></tr>
+			<tr><td>
+				<div id="Source_area">
+					<textarea id="sourceTextarea" spellcheck="false"></textarea>
+				</div>
+			</td><td>
+				<div id="Result_area">
+					<textarea id="resultTextarea" cols="20" readonly></textarea>
+				</div>
+			</td></tr>
+		</table>
+		<div id="EditButtons">
+			<button type="button" class="editButton" onclick='editButton("《変数》に整数を入力する");'>入力（整数）</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》に実数を入力する");'>入力（実数）</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》に文字列を入力する");'>入力（文字列）</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》に真偽を入力する");'>入力（真偽）</button>&nbsp;&nbsp;
+			<button type="button" class="editButton" onclick='editButton("表示する(《値》)");'>出力</button>
+			<button type="button" class="editButton" onclick='editButton("改行なしで表示する(《値》)");'>改行無出力</button><br>
+			<button type="button" class="editButton" onclick='editButton("《変数》=《値》");'>代入</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》+=《値》");'>+=</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》-=《値》");'>-=</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》*=《値》");'>*=</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》/=《値》");'>/=</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》//=《値》");'>//=</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》%=《値》");'>%=</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》&=《値》");'>&amp;=</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》|=《値》");'>|=</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》^=《値》");'>^=</button><br>
+			<button type="button" class="editButton" onclick='editButton("もし《条件式》ならば：");'>もし</button>
+			<button type="button" class="editButton" onclick='editButton("もし《条件式》ならば：\nそうでなければ：");'>もし〜そうでなければ</button><br>
+			<button type="button" class="editButton" onclick='editButton("《条件式》の間：");'>〜の間</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》を《値》から《値》まで《値》ずつ増やしながら：");'>増やしながら</button>
+			<button type="button" class="editButton" onclick='editButton("《変数》を《値》から《値》まで《値》ずつ減らしながら：");'>減らしながら</button>
+			<button type="button" class="editButton" onclick='editButton("《配列》の要素《変数》について繰り返す：");'>配列の要素について</button>
+			<button type="button" class="editButton" onclick='editButton("繰り返しを抜ける\n");'>繰り返しを抜ける</button><br>
+			<button type="button" class="editButton" onclick='editButton("《配列変数》に《値》を追加する");'>配列に追加</button>
+			<button type="button" class="editButton" onclick='editButton("《配列変数》に《配列》を連結する");'>配列に連結</button>&nbsp;&nbsp;
+			<button type="button" class="editButton" onclick='editButton("関数 《関数名》()：");'>関数</button>
+			<button type="button" class="editButton" onclick='editButton("手続き 《手続き名》()：");'>手続き</button>
+			<button type="button" class="editButton" onclick='editButton("《値》を返す");'>値を返す</button>
+			<button type="button" class="editButton" onclick='editButton("手続きを抜ける");'>手続きを抜ける</button>
+		</div>
+		<div id="SampleButtons">
+		</div>
+	</div>
+	<div id="Right_area">
+		<div id="Flowchart_area">
+			<div>
+				<button type="button" onclick="changeSize(1);" style="width:2em;height:2em;float:left;">＋</button>
+				<button type="button" onclick="changeSize(0);" style="width:2em;height:2em;float:left;">0</button>
+				<button type="button" onclick="changeSize(-1);" style="width:2em;height:2em;float:left;">−</button>
+			</div>
+			<canvas id="flowchart" width="400px" height="600px"></canvas><br>
+		</div>
+		<div id="Storage_area">
+			<button type="button" id="storage_upload1">アップロード</button>
+			<input type="file"    id="storage_upload"></input>
+			<a href="#" id="storage_download"><button id="storage_download1">ダウンロード</button></a>
+			<button type="button" id="storage_remove">削除</button>
+			<button type="button" id="storage_clear">全削除</button><br>
+			<select id="storage_list" size="10">
+			</select>
+		</div>
+	</div>
+	<canvas id="canvas"></canvas>
+	<div id="graph"></div>
+<div id="input"></div>
+<div id="input-overlay"></div>
+<script src="../js/js-pypen/load.js" type="text/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="index.css"/>
+        <link rel="icon" href="../pypen.ico"/>
+        <script type="text/javascript" src="graph.js"></script>
+        <title>グラフ描画</title>
+    </head>
+    <body>
+        <div id="whole">
+            <h1>グラフ描画</h1>
+            <p><a href="syntax.html#function">戻る</a></p>
+            <div class="part">
+            <p>グラフ描画(《レイアウト情報》,《値の配列》)のグラフ情報，値の配列についての説明。
+                基本的には値をそのままPlotly.jsのnewPlotに渡していると考えてよい
+                （だからここに書ききれない設定で，使えるものもたくさんある）。
+            </p>
+            </div>
+            <h2>レイアウト情報</h2>
+            <div class="part">
+                <p>レイアウト情報は表のようなキーを持つ連想配列である。
+                    値が「〜または連想配列」となっているものは，「〜」の値か，表にあるキーを持つ連想配列のどちらかを設定する。</p>
+                <table class="def_table">
+                    <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                    <tr><td>title</td><td>文字列または連想配列</td><td>グラフのタイトル
+                        <table>
+                            <tr><th>キー</th><th>値</th><th>値の意味</th></tr>
+                            <tr><td>text</td><td>文字列</td><td>グラフのタイトル</td></tr>
+                            <tr><td>font</td><td>文字列または連想配列</td><td>フォント名
+                                <table>
+                                    <tr><th>キー</th><th>値</th><th>値の意味</th></tr>
+                                    <tr><td>family</td><td>文字列</td><td>フォント名</td></tr>
+                                    <tr><td>size</td><td>1以上の数値</td><td>文字サイズ</td></tr>
+                                    <tr><td>color</td><td>文字列</td><td>文字色</td></tr>
+                                </table>
+                            </td></tr>
+                        </table>
+                    </td></tr>
+                    <tr><td>showlegend</td><td>真偽</td><td>凡例を表示するか</td></tr>
+                    <tr><td>legend</td><td>連想配列</td><td>凡例詳細
+                        <table>
+                            <tr><th>キー</th><th>値の型</th><th>値の意味</th></tr>
+                            <tr><td>bgcolor</td><td>文字列</td><td>背景色</td></tr>
+                            <tr><td>bordercolor</td><td>文字列</td><td>枠色</td></tr>
+                            <tr><td>borderwidth</td><td>0以上の数値</td><td>枠の太さ(px)</td></tr>
+                            <tr><td>font</td><td>文字列または連想配列</td><td>フォント名（連想配列のキーはtitleのfontと同じ）</td></tr>
+                            <tr><td>orientation</td><td>"v"または"h"</td><td>凡例の向き</td></tr>
+                        </table>
+                    </td></tr>
+                    <tr><td>width</td><td>10以上の数値</td><td>幅(px)</td></tr>
+                    <tr><td>height</td><td>10以上の数値</td><td>高さ(px)</td></tr>
+                    <tr><td>font</td><td>文字列または連想配列</td><td>全体的なフォント（連想配列のキーはtitleのfontと同じ）</td></tr>
+                    <tr><td>paper_bgcolor</td><td>文字列</td><td>背景色</td></tr>
+                    <tr><td>plot_bgcolor</td><td>文字列</td><td>プロットエリアの背景色</td></tr>
+                    <tr><td>xaxis,yaxis</td><td>連想配列</td><td>x軸，y軸の情報。
+                        <table>
+                            <tr><th>キー</th><th>値の型</th><th>値の意味</th></tr>
+                            <tr><td>title</td><td>文字列または連想配列</td><td>軸タイトル（連想配列のキーはtitleと同じ）</td></tr>
+                            <tr><td>showgrid</td><td>真偽</td><td>グリッドを表示するか</td></tr>
+                            <tr><td>showline</td><td>真偽</td><td>軸の線を表示するか</td></tr>
+                            <tr><td>zeroline</td><td>真偽</td><td>ゼロの線を強調するか</td></tr>
+                            <tr><td>range</td><td>値の配列</td><td>[最小値,最大値]</td></tr>
+                        </table>
+                    </td></tr>
+                </table>
+            </div>
+
+            <h2>値の配列</h2>
+            <div class="part">
+                <p>「値の配列」は，以下のキーを持つ連想配列の配列である。</p>
+                <table class="def_table">
+                    <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                    <tr><td>type</td><td>文字列</td><td>グラフの種類</td></tr>
+                    <tr><td>name</td><td>文字列</td><td>データ系列の名前</td></tr>
+                    <tr><td>visible</td><td>真偽または"legendonly"</td><td>表示するかどうか</td></tr>
+                    <tr><td>showlegend</td><td>真偽</td><td>凡例に表示するか</td></tr>
+                    <tr><td>opacity</td><td>0〜1の数値</td><td>不透明度</td></tr>
+                    <tr><td>ids</td><td>値の配列</td><td>個々の値のid</td></tr>
+                    <tr><td>text</td><td>文字列または文字列の配列</td><td>個々の値に紐付けられた文字列</td></tr>
+                </table>
+                <h3>typeがscatterの場合</h3>
+                <p>
+                    <script>make_link('例1','eJyNj79Kw1AUxvc-RblTKgGTO4gU-iQhw8UGzGARvYMhZDg3LrZCQSrFTiKCqEtHxT99A1_iI6abr5CTM-hS1LMcvnt_3_dxhsaacJArmx0mqq-O94y1yZHyu2pkDuQlHX08tfpE9aOYd9buotMa9R9GvdGZwl2EoAnc2Y7eBb2D7lgvQLfVzRzuFDQHPYDOmaifl3Dj9WoGuvp6XXS6PHY_sWaQbodBIFpuiLgmBj3KJzesV2_V-JpdcJNvSv-L4qxMKD7BE7L3S-APqrc2w3BLlPcoLz-n03r24uWFH0mPLxFxrwHGw6tD');</script>
+                    <script>make_link('例2','eJyNkM9Kw0AQxu95ijKntu4hybGYJwk5LCYHkbSS5pCl9DBbEWwLRakWC4JIQawIOSr-6cOMsb35Cp2siigVnMMuM_y--b7dUKbS8TqQqv0IGtDekWkaJSAqELfCchLLZC9K2iAgg4YfCFDl1bVKoesZubVL-sQhHJA-cmzbJnwhvObBlHBWXE1IHxBOCOeEQ0aWDznp_moxJjx_f5paFa7MS2QzbMXVmmnVz5a05gVZve5uKT62efWcFxHmX_qyTBafYwaEtxlHWi2ei_4lu5Ae_KaUodQmivCC8JBfYBIfkx5uMHL_ZcTUH0afMZoyjiDw4PX-Dj6-9HtWzM7Askjn1Luh3unbaLQcP1Y7XeEbsTB4UFsDutPHkQ');</script>
+                </p>
+                <table class="def_table">
+                    <tr><th>キー</th><th>値の型</th><th style="width: 70%;">設定される情報</th></tr>
+                    <tr><td>x</td><td>値の配列</td><td>xの値，または横軸のラベル</td></tr>
+                    <tr><td>y</td><td>値の配列</td><td>yの値</td></tr>
+                    <tr><td>mode</td><td>文字列</td><td>表示モード。"lines","markers","lines+markers","lines+markers+text"のどれか。
+                        デフォルトでは，点が20個以上なら"lines"，19個以下なら"lines+markers"になる。</td></tr>
+                    <tr><td>marker</td><td>連想配列</td><td>マーカーのプロパティ
+                        <table>
+                            <tr><th>キー</th><th>値の型</th><th style="width: 70%;">設定される情報</th></tr>
+                            <tr><td>symbol</td><td>文字列</td><td>形状。"circle", "square", "diamond", "cross", "triangle-up", "triangle-down",
+                                "triangle-right", "triangle-left", "triangle-se", "triangle-sw", "triangle-ne", "triangle-nw",
+                                "pentagon", "hexagon", "hexagon2", "octagon", "star", "hexagram", "star-triangle-up", "star-triangle-down",
+                                "diamond-tall", "diamond-wide", …や，それらの後ろに"-open","-dot","-open-dot"を付けたもの。
+                            </td></tr>
+                            <tr><td>size</td><td>0以上の数値</td><td>大きさ(px)</td></tr>
+                            <tr><td>color</td><td>文字列</td><td>色</td></tr>
+                            <tr><td>opacity</td><td>0〜1の数値</td><td>不透明度</td></tr>
+                            <tr><td>line</td><td>連想配列</td><td>輪郭線
+                                <table>
+                                    <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                                    <tr><td>width</td><td>0以上の数値</td><td>太さ(px)</td></tr>
+                                    <tr><td>color</td><td>文字列</td><td>色</td></tr>
+                                </table>
+                            </td></tr>
+                        </table>
+                    </td></tr>
+                    <tr><td>opacity</td><td>0〜1の数値</td><td>不透明度</td></tr>
+                    <tr><td>line</td><td>連想配列</td><td>線のプロパティ
+                        <table>
+                            <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                            <tr><td>color</td><td>文字列</td><td>色</td></tr>
+                            <tr><td>width</td><td>0以上の数値</td><td>太さ(px)</td></tr>
+                            <tr><td>shape</td><td>文字列</td><td>線の引き方。"linear", "spline", "hv", "vh", "hvh", "vhv"のどれか。</td></tr>
+                            <tr><td>dash</td><td>文字列</td><td>線の形状。"solid", "dot", "dash", "longdash", "dashdot", "longdashdot"のどれか。</td></tr>
+                        </table>
+                    </td></tr>
+                </table>
+                <h3>typeがbarの場合</h3>
+                <p>
+                    layoutのbarmodeをstackに設定することで積み上げ棒グラフが作れる。<br>
+                    <script>make_link('例1','eJxNizEKwkAQRfucQn6lMMXMrhYGcpJlixVTKiIpDCEgprFLo52ljZ29x1mM10iyq2D1h3nvrV3hJKtQlLscKVZuD5rggNRAutsZBBVHx5mPY-tk7FQW6nCLQQmbGWEmxbRg0myj9SWaSZiWI45gSLZukw8M7-Nd8LP_ngpJ4k9P3zx8c-3a9nN5TauaTMgp-HbWAyzpQqI');</script>
+                    <script>make_link('例2','eJxNjjEKwkAURPucQqZS-MXfjRYGcpJli9WkkqhoCkMIiGns0mhnaWNn73GC8RrJ7ipYzee_mWESkxsRl8iLbYoIC7MDjXBApCC62xkE6SX0MrWiq8DmZOzS7hYKBXSsBDNJphlTyNq7viRkEkxziz0YImuTpQPD-3gX-Ln_nhJB0J6ebf1o62vXNJ_La1zakdkmsXP3uVmuUJFyfeQK9KQHzr1IVA');</script>
+                </p>
+                <table class="def_table">
+                    <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                    <tr><td>x</td><td>配列</td><td>横軸のラベル</td></tr>
+                    <tr><td>y</td><td>数値の配列</td><td>値</td></tr>
+                    <tr><td>marker</td><td>連想配列</td><td>棒のプロパティ
+                        <table>
+                            <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                            <tr><td>color</td><td>文字列</td><td>色</td></tr>
+                            <tr><td>line</td><td>連想配列</td><td>輪郭線のプロパティ（scatterのmakerのlineと同じ）</td></tr>
+                        </table>
+                    </td></tr>
+                    <tr><td>opacity</td><td>0〜1の数値</td><td>不透明度</td></tr>
+                </table>
+                <h3>typeがpieの場合</h3>
+                <p>
+                    <script>make_link('例1','eJw9jLHOgjAURnce45s0dmhBFxNWX6Jh6K_XhKQCgWo0hMTI4saim6PLv7n7OER8DaAEp5Oc79y7UUYJP4c5JYQlkpBQOFZKaPVHOkPgS4jmcQWDO8AbMO8RjPVB6T3ZWnDOXM4WnHn8N0dqR92Iz_kpMMosTk0nV0pnNDpDRxNG27iP7c9ZQumaIgPHqS-vuvyvy3tTVd_be5IXTNqzYNoCEKBIZg');</script>
+                    <script>make_link('例2','eJxNzb9KBDEQBvB-n0KmUhgkyZ6HLmzrS4QUEUc8iMlioijLgriN3TXaWdrY2fs4i-drbP64ctUk3zf85lIHzdsewmNH0EC3IcADMPqCjIdGAt-9vwCCKKMuY5WGinve3QZozrXxFH-BHsLGXrnoWGcJhirpos038ptLuNfmjjyoVnLGUDA8YVgztdRW31As4efpg8MSXjuTQna8LuK-csZwlQRc_yGx3UNEQWL4j5xW1fT8NY2f0_i2225_X78P-wFlvoV5WR3NLkteHg');</script>
+                </p>
+                <table class="def_table">
+                    <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                    <tr><td>values</td><td>数値の配列</td><td>値</td></tr>
+                    <tr><td>labels</td><td>値の配列</td><td>値のラベル</td></tr>
+                    <tr><td>text</td><td>値の配列</td><td>各値に紐付けられた文字列</td></tr>
+                    <tr><td>marker</td><td>連想配列</td><td>扇形のプロパティ
+                        <table>
+                            <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                            <tr><td>colors</td><td>文字列の配列</td><td>色</td></tr>
+                            <tr><td>line</td><td>連想配列</td><td>輪郭線（scatterのmarkerのlineと同じだが，それぞれ配列にもできる）</td></tr>
+                        </table>
+                    </td></tr>
+                    <tr><td>opacity</td><td>0〜1の数値</td><td>不透明度</td></tr>
+                    <tr><td>pull</td><td>0〜1の数値</td><td>中心から外側に離す割合</td></tr>
+                    <tr><td>direction</td><td>文字列</td><td>向き。"clockwise"か"counterclockwise"。</td></tr>
+                    <tr><td>hole</td><td>0〜1の数値</td><td>穴の大きさ（ドーナツチャートを作るために）</td></tr>
+                    <tr><td>rotation</td><td>-360〜360の数値</td><td>開始角度</td></tr>
+                    <tr><td>sort</td><td>真偽</td><td>ソートするか</td></tr>
+                    <tr><td>textinfo</td><td>文字列</td><td>円グラフ内に表示する情報。
+                        "label", "text", "value", "percent"のどれかか，それらを"+"でつないだもの。
+                        表示しないなら"none"
+                    </td></tr>
+                </table>
+                <h3>typeがboxの場合</h3>
+                <p>
+                    <script>make_link('例1','eJytkc9K80AUxffzFOWuEgyYpLtAniRkMdIgAZtIjdJQAs7EjY1Q-KgUuxIpiIpQEBfinz7MIbY7X6HXdPEhFFfOZmaYe875caYjM-n4A8ryw4g82kv7ZLUoJy8IeU97cZRkMovThB9PqBDf867fqEQM_c-BqqDPHduG-oC65fsUalbfTKDPoCZQ91AXPLF8mUMPV4sx1NXX21S0eDU2AaeFUA9GTyadtGs4trnz_2juupyyWrzXw2tWQlcNAqsS2Y0o9An6GXoG_YTy0a1PKxJ_A-b-DvaDsb2NkQ22MbY3jAcyT48zbj6X_fiIvAGx4T7_QWBbjh0WhRDQc5R3KC8_R6Pl-NXYSKygKcBqIkJzDcr_zas');</script>
+                </p>
+                <table class="def_table">
+                    <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                    <tr><td>x</td><td>数値の配列</td><td>値（横型で表示する場合）</td></tr>
+                    <tr><td>y</td><td>数値の配列</td><td>値（縦型で表示する場合）</td></tr>
+                    <tr><td>orientation</td><td>文字列</td><td>向き。"v"か"h"</td></tr>
+                    <tr><td>marker</td><td>連想配列</td><td>
+                        <table>
+                            <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                            <tr><td>outliercolor</td><td>文字列</td><td>外れ値の色</td></tr>
+                            <tr><td>symbol</td><td>文字列</td><td>マーカーの形状（scatterのmarkerのsymbolと同じ）</td></tr>
+                            <tr><td>opacity</td><td>0〜1の数値</td><td>不透明度</td></tr>
+                            <tr><td>size</td><td>0以上の数値</td><td>マーカーのサイズ(px)</td></tr>
+                            <tr><td>color</td><td>文字列</td><td>マーカーの色</td></tr>
+                        </table>
+                    </td></tr>
+                    <tr><td>line</td><td>連想配列</td><td>箱ひげ図の線。colorとwidthがキー</td></tr>
+                    <tr><td>boxmean</td><td>真偽または"sd"</td><td>平均を表示するか。"sd"では標準偏差も表示する。</td></tr>
+
+                </table>
+                <h3>typeがhistogramの場合</h3>
+                <p>
+                    <script>make_link('例1','eJytj7FKw0Acxvc8hfynBAMm6VbIk4QMBw2aIYnEQ5RQ8H9xsREKUil2EimIilAQB9Hah_mI7eYr9DwHEYqTN93B9_u-3_WEFH5YkTzeT6hLe-mBLHZLkZFLR9SNYpeKMk1yKWRa5DpwSH3riwlCQ1op1IUPbqDOfM8Dv4Nv9XsCnrY3Y6hT8Bh8Dz7XieXLDGqwWozAV59vE2tLH1MT6bEY_GCXIu8Vme17zvbP1dkJ9MpqMW8H15qEaoyCpnKRJRSHBPUMNYV6Qv0YtCcNWf8jFvwt9suxs8lRF2xy7Hw7Qs1Q36G-_BgOl6NXu-q7kfmZa9jYWQOpfMK8');</script>
+                </p>
+                <table class="def_table">
+                    <tr><th>キー</th><th>値の型</th><th>設定される情報</th></tr>
+                    <tr><td>x</td><td>数値の配列</td><td>値（横型で表示する場合）</td></tr>
+                    <tr><td>y</td><td>数値の配列</td><td>値（縦型で表示する場合）</td></tr>
+                    <tr><td>orientation</td><td>文字列</td><td>向き。"v"か"h"</td></tr>
+                    <tr><td>marker</td><td>連想配列</td><td>ヒストグラムのプロパティ</td></tr>
+                </table>
+            </div>
+            <p>Plotly.jsは高機能すぎて，とてもではないが書ききれない。</p>
+        </div>
+    </body>
+</html>

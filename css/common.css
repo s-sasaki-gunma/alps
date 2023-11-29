@@ -1,0 +1,148 @@
+@font-face {
+    font-family: 'HackGen';
+    src: url(../css/HackGenConsoleNFJ-Regular.ttf);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+main {
+  max-width: 38rem;
+  padding: 2rem;
+  margin: auto;
+}
+
+html {
+  padding: 1vh 1vw;
+  font-size: 2.0vw;
+  margin: auto;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  margin: 2em 0 1em;
+}
+
+p,ul,ol {
+  margin-bottom: 2em;
+  color: #1d1d1d;
+  font-family: sans-serif;
+}
+
+a,a:hover {
+    text-decoration: none;
+    color: #000;			
+}
+
+/* editor  */
+
+.header {
+    display:block;
+    width: 100%;
+    padding: 1vh 1vw;
+}
+.btn-group {
+    width: 96vw;
+    display:flex;
+    flex-wrap: wrap;
+}
+.btn-group div, .btn {
+    flex: 1 1;
+}
+.container {
+    width: 98vw;
+    display:flex;
+    height: 85vh;
+    flex-wrap: wrap;
+}
+.content {
+    padding: 0;
+    margin: 0.5vh 0.5vw;
+    flex: 1 1 400px;
+}
+#output, pre {
+    font-family: 'HackGen';
+    font-size: 2.0em;
+    background: #000000;
+    color: #ffffff;
+    overflow-x:auto;
+    white-space: pre-wrap;
+    line-height: 1.0em;
+}
+pre {
+    font-size: 1.0em;
+    border-style: none;
+    max-width:100%;
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+.sharedLink {
+    display: inline-block;
+    width: 96vw;
+    padding: 0;
+    margin: 1vh 1vw 0vh;
+    line-height: 1.5em;
+    border: solid 1px #ffffff;
+    background-color: #efefef;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sharedLink span {
+    margin: 0 1em 0 0;
+    padding: 0 1em;
+    color: #ffffff;
+    border: solid 1px #ffffff;
+    background-color: #27acd9;
+}
+
+
+/* index / sample  */
+
+#main {
+    text-align: center;
+}
+
+#title {
+    margin-bottom: 1em;
+}
+.category{
+    width: 30%;
+    display: inline-block;
+    margin: 1%;
+    padding: 2% 0%;
+    background-color:aliceblue;
+}
+.category a {
+    display: block;
+    margin: 1em 10%;
+    padding: 2% 0;
+    background-color:#c7eeff;
+    box-shadow: 2px 2px 2px rgba(0,0,0,.3);
+}
+.category a:hover {
+    background-color:#0077c0;
+    box-shadow: 1px 1px 1px rgba(0,0,0,.2);
+    color:#ffffff;
+}
+
+.puzzle_link{
+    width: 30%;
+    display: inline-block;
+    margin: 1%;
+}
+.puzzle_link a {
+    display: block;
+    background-color: aliceblue;
+    box-shadow: 2px 2px 2px rgba(0,0,0,.7);
+    padding: 1em;
+}
+.puzzle_link a:hover {
+    background-color:#0077c0;
+    box-shadow: 1px 1px 1px rgba(0,0,0,.3);
+    color:#ffffff;
+}

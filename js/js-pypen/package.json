@@ -1,0 +1,37 @@
+{
+  "name": "pypen",
+  "version": "1.0.0",
+  "description": "PEN like Python",
+  "author": "watayan",
+  "maintainers": [
+    {
+      "name": "Wataru Nakanishi",
+      "email": "watayan@watayan.net"
+    }
+  ],
+  "license": "MIT",
+  "main": "run1.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "uglifyjs run.js -o run.min.js",
+    "jison": "jison dncl.jison; patch < dncl.patch; uglifyjs dncl.js -o dncl.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/watayan/PyPEN.git"
+  },
+  "bugs": {
+    "url": "https://github.com/watayan/PyPEN/issues"
+  },
+  "homepage": "https://github.com/watayan/PyPEN#readme",
+  "devDependencies": {
+    "jison": "^0.4.18",
+    "uglify-es": "^3.3.9"
+  },
+  "dependencies": {
+    "codemirror": "^5.62.2",
+    "eslint": "^5.16.0",
+    "jison-lex": "^0.3.4",
+    "npm": "^6.14.8"
+  }
+}
