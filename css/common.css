@@ -131,15 +131,18 @@ pre {
 }
 
 .puzzle_link{
-    width: 30%;
+    width: 100%;
     display: inline-block;
-    margin: 1%;
+    margin: 20px;
+}
+.puzzle_link h1 {
+    margin: 10px;
 }
 .puzzle_link a {
     display: block;
     background-color: aliceblue;
     box-shadow: 2px 2px 2px rgba(0,0,0,.7);
-    padding: 1em;
+    padding: 5px;
 }
 .puzzle_link a:hover {
     background-color:#0077c0;
